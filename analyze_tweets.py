@@ -1,23 +1,19 @@
-'''
-Author: Adil Moujahid
-Description: Script for analyzing tweets to compare the popularity of 3 programming languages: Python, Javascript and ruby
-Reference: http://adilmoujahid.com/posts/2014/07/twitter-analytics/
-'''
-
 import json
 import pandas as pd
 import matplotlib.pyplot as plt
 import re
 
 
-def word_in_text(word, text):
-    word = word.lower()
-    text = text.lower()
-    match = re.search(word, text)
-    if match:
-        return True
-    return False
-
+def word_in_text(word,text):
+	if text == None:
+		return False
+	word = word.lower()
+	text = text.lower()
+	match = re.search(word,text)
+	if match:
+		return True
+	else:
+		return False
 
 def extract_link(text):
     regex = r'https?://[^\s<>"]+|www\.[^\s<>"]+'
@@ -47,14 +43,14 @@ def main():
 	#Structuring Tweets
 	print 'Structuring Tweets\n'
 	tweets = pd.DataFrame()
-	tweets['text'] = map(lambda tweet: tweet['text'], tweets_data)
-	tweets['lang'] = map(lambda tweet: tweet['lang'], tweets_data)
-	tweets['country'] = map(lambda tweet: tweet['place']['country'] if tweet['place'] != None else None, tweets_data)
+	tweets['text'] = map(lambda tweet: tweet.get('text', None),tweets_data)
+	tweets['lang'] = map(lambda tweet: tweet.get('lang', None),tweets_data)
+	tweets['country'] = map(lambda tweet: tweet.get(('place', None),('country',None)) if tweet.get('place',None) != None else None, tweets_data)
 
 
 	#Analyzing Tweets by Language
 	print 'Analyzing tweets by language\n'
-	tweets_by_lang = tweets['lang'].value_counts()
+	tweets_by_lang = tweets.get('lang',None).value_counts()
 	fig, ax = plt.subplots()
 	ax.tick_params(axis='x', labelsize=15)
 	ax.tick_params(axis='y', labelsize=10)
@@ -67,7 +63,7 @@ def main():
 
 	#Analyzing Tweets by Country
 	print 'Analyzing tweets by country\n'
-	tweets_by_country = tweets['country'].value_counts()
+	tweets_by_country = tweets.get('country',None).value_counts()
 	fig, ax = plt.subplots()
 	ax.tick_params(axis='x', labelsize=15)
 	ax.tick_params(axis='y', labelsize=10)
